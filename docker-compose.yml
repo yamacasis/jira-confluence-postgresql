@@ -19,8 +19,23 @@ services:
       - 'JIRA_PROXY_NAME=${JIRAPROXYNAME}'
       - 'JIRA_PROXY_PORT=${JIRAPROXYPORT}'
       - 'JIRA_PROXY_SCHEME=${JIRAPROXYSCHEME}'
+  postgresql:
+    image: postgres:9.5-alpine
+    networks:
+      - jiranet
+    volumes:
+      - postgresqldata:/var/lib/postgresql/data
+    environment:
+      - 'POSTGRES_USER=${POSTGRESUSER}'
+      - 'POSTGRES_PASSWORD=${POSTGRESPASSWORD}'
+      - 'POSTGRES_DB=${POSTGRESDB}'
+      - 'POSTGRES_ENCODING=UNICODE'
+      - 'POSTGRES_COLLATE=C'
+      - 'POSTGRES_COLLATE_TYPE=C'
 volumes:
   jiradata:
+    external: false
+  postgresqldata:
     external: false
 
 networks:
