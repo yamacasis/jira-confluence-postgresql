@@ -5,6 +5,7 @@ services:
     depends_on:
       - postgresql
     image: teamatldocker/jira
+    container_name: jira
     networks:
       - jiranet
     volumes:
@@ -19,6 +20,34 @@ services:
       - 'JIRA_PROXY_NAME=${JIRAPROXYNAME}'
       - 'JIRA_PROXY_PORT=${JIRAPROXYPORT}'
       - 'JIRA_PROXY_SCHEME=${JIRAPROXYSCHEME}'
+  confluence:
+    image: eugenmayer/confluence
+    container_name: confluence
+    volumes:
+      - confluencedata:/var/atlassian/confluence
+    ports:
+      - '80:8090'
+      - '8091:8091'
+    environment:
+      - CONFLUENCE_DB_HOST=postgresql
+      - CONFLUENCE_DB_PORT=5432
+      - CATALINA_OPTS=-Xms256m -Xmx1g
+      - CONFLUENCE_PROXY_NAME=
+      - CONFLUENCE_PROXY_PORT=
+      - CONFLUENCE_PROXY_SCHEME=
+      - CONFLUENCE_DELAYED_START=
+      - CONFLUENCE_CONFIG_PROPERTY1=hibernate.connection.driver_class
+      - CONFLUENCE_CONFIG_VALUE1=org.postgresql.Driver
+      - CONFLUENCE_CONFIG_PROPERTY2=hibernate.connection.password
+      - CONFLUENCE_CONFIG_VALUE2=jellyfish
+      - CONFLUENCE_CONFIG_PROPERTY3=hibernate.connection.url
+      - CONFLUENCE_CONFIG_VALUE3=jdbc:${POSTGRESUSER}@postgresql/${POSTGRESDB2}
+      - CONFLUENCE_CONFIG_PROPERTY4=hibernate.connection.username
+      - CONFLUENCE_CONFIG_VALUE4=confluencedb
+    depends_on:
+      - postgresql
+    networks:
+      - jiranet
   postgresql:
     image: postgres:9.5-alpine
     networks:
@@ -36,6 +65,8 @@ volumes:
   jiradata:
     external: false
   postgresqldata:
+    external: false
+  confluencedata:
     external: false
 
 networks:
