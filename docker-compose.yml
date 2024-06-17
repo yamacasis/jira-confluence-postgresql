@@ -50,6 +50,7 @@ services:
       - jiranet
   postgresql:
     image: postgres:9.5-alpine
+    container_name: postgresql
     networks:
       - jiranet
     volumes:
